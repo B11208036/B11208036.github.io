@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大學校園發展趨勢報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            primary: '#3b82f6',
+                            secondary: '#10b981',
+                            accent: '#f43f5e',
+                            glass: 'rgba(255, 255, 255, 0.03)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section-padding {
+            padding: 80px 20px;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .bento-grid {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+        .custom-shadow {
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <!-- Hero / Infographic Header (置頂) -->
+    <header class="relative min-h-screen flex flex-col items-center justify-center section-padding overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[120px] animate-pulse-slow"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600 rounded-full blur-[120px] animate-pulse-slow"></div>
+        </div>
+
+        <div class="relative z-10 max-w-6xl w-full text-center mb-12">
+            <h1 class="font-display text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
+                大學校園<span class="gradient-text">發展趨勢</span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
+                整合智慧科技、永續治理與人本空間，打造未來高等教育的實體與數位生態圈。
+            </p>
+        </div>
+
+        <!-- Infographic Rendering -->
+        <div class="relative z-10 w-full max-w-5xl group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div class="relative glass-card overflow-hidden">
+                <img src='https://opal.google/board/blobs/0d3fc03d-707a-4141-87f9-150c39d1512d' alt='大學校園發展趨勢資訊圖表' class="w-full h-auto block" />
+            </div>
+            <p class="mt-4 text-center text-slate-500 text-sm font-display tracking-widest uppercase">Visual Data Visualization · 2024</p>
+        </div>
+    </header>
+
+    <!-- Video Section (置中) -->
+    <section class="section-padding bg-slate-950/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <h2 class="font-display text-3xl md:text-4xl font-bold mb-8">
+                        未來校園<br/><span class="text-emerald-400">視覺探索</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                            <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-100">智慧化生態系統</h3>
+                                <p class="text-slate-400 text-sm">物聯網與大數據驅動的現代感智慧建築。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-100">永續與綠能</h3>
+                                <p class="text-slate-400 text-sm">整合垂直花園與再生能源的綠色設計。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                            <div class="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-100">第三空間與心理福祉</h3>
+                                <p class="text-slate-400 text-sm">提供緩解社交孤獨感的通透交流場所。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Player Integrated -->
+                    <div class="mt-8 p-6 glass-card border-blue-500/20">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/50 animate-pulse">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M14 5.23l-7 5.77H3v6h4l7 5.77V5.23zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs uppercase tracking-widest text-blue-400 font-bold">Ambient Sound</p>
+                                <p class="text-sm text-slate-300">未來感背景音樂</p>
+                            </div>
+                        </div>
+                        <audio controls src='https://opal.google/board/blobs/93abae05-6df4-4c6a-9a6a-648f3e90f4bd' class="w-full h-8 opacity-70"></audio>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 w-full">
+                    <div class="relative aspect-[9/16] max-w-[320px] mx-auto rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden custom-shadow">
+                        <video 
+                            src='https://opal.google/board/blobs/6908b704-86dd-41d6-9db5-59ba1f82b084' 
+                            class="w-full h-full object-cover" 
+                            autoplay 
+                            loop 
+                            muted 
+                            playsinline>
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Report Content (置底) -->
+    <main class="section-padding max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            <!-- Sidebar: Summary Chips & Visual Reference -->
+            <div class="lg:col-span-4 space-y-8">
+                <div class="glass-card p-8">
+                    <h4 class="font-display text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="w-2 h-8 bg-blue-500 rounded-full"></span>
+                        條列式摘要
+                    </h4>
+                    <ul class="space-y-6">
+                        <li class="group">
+                            <span class="text-blue-400 font-bold block mb-1">智慧化生態系統</span>
+                            <p class="text-slate-400 text-sm leading-relaxed">從硬體轉向以使用者為中心，結合物聯網、大數據與人工智慧優化治理。</p>
+                        </li>
+                        <li class="group">
+                            <span class="text-emerald-400 font-bold block mb-1">永續治理與 SDGs</span>
+                            <p class="text-slate-400 text-sm leading-relaxed">推動「校園作為活實驗室」，提升能源效率並降低碳足跡。</p>
+                        </li>
+                        <li class="group">
+                            <span class="text-rose-400 font-bold block mb-1">空間心理與社交</span>
+                            <p class="text-slate-400 text-sm leading-relaxed">強化「第三空間」設計，促進實體交流並提升心理福祉。</p>
+                        </li>
+                        <li class="group">
+                            <span class="text-amber-400 font-bold block mb-1">後疫情空間轉型</span>
+                            <p class="text-slate-400 text-sm leading-relaxed">強調動態性與適應性，將走廊與中庭轉化為多功能協作節點。</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="relative overflow-hidden rounded-3xl group">
+                    <img src='https://opal.google/board/blobs/bb5a4920-3b60-492a-ac9f-46f1b842c8b6' alt='視覺參考圖' class="w-full h-auto transition-transform duration-700 group-hover:scale-110" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute bottom-4 left-4">
+                        <span class="text-xs font-display text-white/70 uppercase tracking-tighter bg-black/40 backdrop-blur px-2 py-1 rounded">Concept Art</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Article Body -->
+            <div class="lg:col-span-8">
+                <div class="prose prose-invert max-w-none">
+                    <div class="mb-12">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-full border border-blue-500/20 mb-4 inline-block">TREND REPORT 2024</span>
+                        <h2 class="text-4xl font-bold text-white mb-6 leading-tight">大學校園發展趨勢報告</h2>
+                        <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full"></div>
+                    </div>
+
+                    <div class="space-y-8 text-slate-300 leading-relaxed text-lg font-light">
+                        <p>
+                            近年來，大學校園的規劃與發展已跨越傳統的實體空間建設，轉向整合科技、環境與人本需求的綜合性生態系統。綜合 2020 年後的相關文獻，當前大學校園的發展趨勢主要可歸納為智慧化、永續性、空間社交功能及後疫情時代的轉型等四大面向。
+                        </p>
+                        
+                        <div class="p-8 glass-card my-10 border-l-4 border-l-blue-500">
+                            <h3 class="text-xl font-bold text-white mb-4">1. 智慧校園數位轉型</h3>
+                            <p>首先，在智慧化方面，建立智慧校園 (Smart Campus) 已成為高等教育數位轉型的重要指標。現代校園不再僅是物聯網 (IoT) 技術的硬體堆疊，而是深度結合大數據分析、人工智慧與雲端運算的生態系統。未來的發展核心將從單純的基礎設施建置，轉向以學生與教職員為中心的使用者服務優化。</p>
+                        </div>
+
+                        <p>
+                            其次，校園規劃的重點已從單一的綠建築標準，擴展為全面的永續治理。許多高等教育機構正積極將聯合國永續發展目標 (SDGs) 納入校園營運中。其中，將校園作為活實驗室 (Campus as a Living Lab) 的概念備受重視，此模式將物理環境的永續改造與學術研究及課程教學結合。
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10">
+                            <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                <h3 class="text-lg font-bold text-rose-400 mb-3">第三空間 (Third Space)</h3>
+                                <p class="text-sm">具備高度通透性、舒適家具配置及充足綠化，有效降低心理壓力與數位學習的孤獨感。</p>
+                            </div>
+                            <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                <h3 class="text-lg font-bold text-amber-400 mb-3">靈活學習空間</h3>
+                                <p class="text-sm">混合式學習普及，傳統大型階梯教室減少，取而代之的是多功能協作學習節點。</p>
+                            </div>
+                        </div>
+
+                        <p>
+                            最後，因應後疫情時代的來臨，學習空間 (Learning Spaces) 的設計正面臨重大轉型。現代校園規劃更強調動態性與適應性，例如將中庭或走廊轉化為智慧學習節點，並確保全校園覆蓋高品質的無線網路與充電設施，以支援多元化的教學模式。
+                        </p>
+                    </div>
+
+                    <!-- Conclusion Box -->
+                    <div class="mt-16 p-10 bg-gradient-to-br from-blue-600/20 to-emerald-600/20 rounded-[2.5rem] border border-white/10">
+                        <h3 class="text-2xl font-bold text-white mb-4 italic font-display">簡要結論</h3>
+                        <p class="text-slate-300 leading-loose">
+                            未來的大學校園發展將不再侷限於單一維度的硬體擴建，而是朝向智慧科技、環境永續與人本設計的深度融合。透過數位技術優化治理與能源管理，實踐永續發展目標，並藉由靈活的空間配置與第三空間設計來滿足後疫情時代的社交與心理需求，大學校園將逐步演變為一個具備高度適應性且全面支持創新教學的永續生態系統。
+                        </p>
+                    </div>
+
+                    <!-- References -->
+                    <div class="mt-12 pt-8 border-t border-slate-800">
+                        <h4 class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-4">引用的文獻來源</h4>
+                        <ol class="text-xs text-slate-500 space-y-2 list-decimal list-inside">
+                            <li>Smart Campus: A Review of the Literature and Future Research Directions (2021)</li>
+                            <li>Implementation of Sustainable Development Goals in Higher Education Institutions: A Systematic Literature Review (2022)</li>
+                            <li>Impact of University Campus Physical Environment on Social Interaction and Student Well-being (2023)</li>
+                            <li>Towards Smart and Sustainable Campuses: Integrated Frameworks and Technological Pathways (2022)</li>
+                            <li>The University Campus in the Post-Pandemic Era: New Trends in Learning Space Design (2020/2021)</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Student Info & Footer (Centered) -->
+    <div class="w-full py-12 flex flex-col items-center justify-center bg-black">
+        <div class="text-slate-600 text-xs font-display tracking-widest mb-2">STUDENT ID: B11208036</div>
+        <div class="text-slate-400 text-sm">
+            【主題探索報告】by <span class="italic text-red-600 font-semibold">Famidoc Chang</span>
+        </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="fixed bottom-8 right-8 z-50 pointer-events-none hidden md:block">
+        <div class="glass-card px-4 py-2 text-[10px] font-display text-white/50 tracking-tighter border-white/5">
+            SCROLL TO EXPLORE
+        </div>
+    </div>
+
+</body>
+</html>

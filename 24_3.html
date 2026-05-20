@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>怕渴英文 Parker English ⎮ NotebookLM 智慧自學平台</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+        }
+        /* 隱藏滾動條但保持功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* 卡片翻轉動畫效果 */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        /* 自定義滾動條設計 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col overflow-hidden">
+
+    <!-- 頂部導航列 -->
+    <header class="bg-white border-b border-slate-200 shrink-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- 品牌 LOGO -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-indigo-200">
+                    P
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-900 leading-tight">怕渴英文 <span class="text-indigo-600">Parker English</span></h1>
+                    <p class="text-xs text-slate-500 font-medium">NotebookLM 智慧自學平台</p>
+                </div>
+            </div>
+
+            <!-- 全局快搜框 -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8 relative">
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="global-search" oninput="handleGlobalSearch()" placeholder="搜尋多益/雅思核心單字、文法與FAQ..." class="w-full pl-10 pr-4 py-2 bg-slate-100 hover:bg-slate-200/70 focus:bg-white border border-transparent focus:border-indigo-500 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                <!-- 搜尋結果下拉面板 -->
+                <div id="search-results-dropdown" class="hidden absolute left-0 right-0 top-12 bg-white rounded-xl shadow-xl border border-slate-200 max-h-80 overflow-y-auto z-50 p-2"></div>
+            </div>
+
+            <!-- 平台統計與選單 -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold">
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full animate-ping"></span>
+                    <span>11/23 多益聽力與詞彙庫已載入</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 底部移動端搜尋欄 (限行動端顯示) -->
+    <div class="md:hidden bg-white border-b border-slate-200 p-3 shrink-0">
+        <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <input type="text" id="mobile-global-search" oninput="handleGlobalSearch(true)" placeholder="搜尋多益/雅思核心單字、文法..." class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-transparent focus:border-indigo-500 rounded-xl text-xs transition-all focus:outline-none">
+            <div id="mobile-search-results-dropdown" class="hidden absolute left-0 right-0 top-11 bg-white rounded-xl shadow-xl border border-slate-200 max-h-64 overflow-y-auto z-50 p-2"></div>
+        </div>
+    </div>
+
+    <!-- 主體內容佈局 -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- 左側側邊導航欄 -->
+        <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 p-4 justify-between shrink-0">
+            <div class="space-y-1">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">主要功能</p>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-indigo-50 text-indigo-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    <span>首頁儀表板</span>
+                </button>
+                <button onclick="switchTab('library')" id="nav-library" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>課程資源庫</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>互動模擬測驗</span>
+                </button>
+                <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    <span class="flex-1 text-left">NotebookLM 對話</span>
+                    <span class="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-md text-[10px] font-bold">AI</span>
+                </button>
+                <button onclick="switchTab('faq')" id="nav-faq" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>文法常見 FAQ</span>
+                </button>
+            </div>
+            <!-- 底部署名 -->
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-xs text-slate-500 font-semibold">本地自學模式啟用</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">怕渴英文系列教材 ⎮ 版權所有</p>
+            </div>
+        </aside>
+
+        <!-- 主要呈現視窗 -->
+        <main class="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
+            
+            <!-- Tab 1: 學習首頁/儀表板 (Dashboard) -->
+            <section id="tab-dashboard" class="space-y-6 tab-content">
+                <!-- 歡迎看板 -->
+                <div class="bg-gradient-to-r from-indigo-900 to-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-900/10">
+                    <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-indigo-500/20 rounded-full blur-2xl"></div>
+                    <div class="absolute right-12 top-6 opacity-10 hidden sm:block">
+                        <svg class="w-36 h-36 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.49 12L3 10.64v2.72L5.49 12zm11.02 0L19 10.64v2.72L16.51 12zM12 15.3l-5.5-3v2.85l5.5 3 5.5-3v-2.85l-5.5 3z"/></svg>
+                    </div>
+                    <div class="relative z-10 space-y-2 max-w-lg">
+                        <span class="bg-indigo-500/30 text-indigo-300 border border-indigo-400/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase">怕渴英文 x NotebookLM</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">打造你專屬的多益與雅思知識腦！</h2>
+                        <p class="text-slate-300 text-sm leading-relaxed">本系統已深度匯入怕渴英文多部名師教學影片與文法講義。包含 11/23 線上課程重點、多益必考單字（電腦、辦公用品）、以及雅思關鍵字彙等，隨時準備與你互動對話！</p>
+                        <div class="pt-4 flex flex-wrap gap-3">
+                            <button onclick="switchTab('chat')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-900/40">開啟 NotebookLM 對話</button>
+                            <button onclick="switchTab('library')" class="bg-white/10 hover:bg-white/15 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-all border border-white/20">瀏覽單字庫</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 統計看板與快速工具 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="p-3.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">知識庫單字總量</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="stat-total-words">38 個核心詞彙</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="p-3.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">模擬測驗進度</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="stat-quiz-score">暫無作答紀錄</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="p-3.5 bg-amber-50 text-amber-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">上傳參考來源</p>
+                            <h3 class="text-xl font-bold text-slate-800">5 個核心文檔</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="p-3.5 bg-rose-50 text-rose-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">自定義複習清單</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="stat-review-count">0 個單字</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 學習地圖與推薦 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左二：精選學習資源 -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                            <span>📚 怕渴精選單字卡集</span>
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="dashboard-resource-grid">
+                            <!-- JS 動態生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 右一：11/23 線上多益班必看重點 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h4 class="font-bold text-slate-900 flex items-center space-x-2 text-base">
+                            <span class="p-1.5 bg-rose-50 text-rose-600 rounded-lg">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </span>
+                            <span>怕渴文法必備大補帖</span>
+                        </h4>
+                        <div class="space-y-3.5">
+                            <div class="p-3 bg-slate-50 rounded-xl space-y-1">
+                                <span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-md">核心重點：複合名詞</span>
+                                <p class="text-xs text-slate-700 font-semibold leading-relaxed mt-1">
+                                    專有名詞（如公司名、品牌名或人名）「絕對不能」用來作為複合名詞的前者！
+                                </p>
+                                <p class="text-[11px] text-slate-400">
+                                    例：我們常說 customer service (客服) 兩名詞併列，但若為專有公司名稱（如 Apple 或 Microsoft），絕不能用作複合名詞。
+                                </p>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl space-y-1">
+                                <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded-md">文法技巧：形容詞 vs 名詞子句</span>
+                                <p class="text-xs text-slate-700 font-semibold leading-relaxed mt-1">
+                                    透過 that 後方引導之句子是否「完整」，來快速辨識此子句為「形容詞子句」或「名詞子句」。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: 資源庫 (Library) -->
+            <section id="tab-library" class="hidden space-y-6 tab-content">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">課程資源庫 ⎮ 怕渴講義字彙集</h2>
+                        <p class="text-sm text-slate-500">點擊單字卡片即可「翻轉」查看翻譯與多益/雅思真實聽力例句，點擊發音按鈕可收聽標準美式英語。</p>
+                    </div>
+                    <!-- 分類篩選按鈕 -->
+                    <div class="flex flex-wrap gap-2" id="library-filters">
+                        <button onclick="filterLibrary('all')" class="filter-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-100 transition-all">全部資源</button>
+                        <button onclick="filterLibrary('TOEIC')" class="filter-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">多益核心</button>
+                        <button onclick="filterLibrary('IELTS')" class="filter-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">雅思精選</button>
+                        <button onclick="filterLibrary('phr')" class="filter-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">動詞片語</button>
+                    </div>
+                </div>
+
+                <!-- 資源卡片網格 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="library-grid">
+                    <!-- JS 動態生成 -->
+                </div>
+            </section>
+
+            <!-- Tab 3: 互動測驗 (Quiz) -->
+            <section id="tab-quiz" class="hidden max-w-3xl mx-auto space-y-6 tab-content">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-bold text-slate-900">怕渴英文 ⎮ 智慧學習成效測驗</h2>
+                    <p class="text-sm text-slate-500">從怕渴多益/雅思逐字稿單字庫中隨機挑選 5 道模擬題。答對答錯將會有音效互動唷！</p>
+                </div>
+
+                <!-- 測驗起始面板 -->
+                <div id="quiz-start-panel" class="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-6 shadow-sm">
+                    <div class="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+                        📝
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-lg text-slate-800">準備好挑戰今天的怕渴考題了嗎？</h3>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">題目涵蓋電腦、辦公用品單字語彙填空，以及 11/23 多益文法班中的複合名詞、子句觀念。</p>
+                    </div>
+                    <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm px-6 py-3 rounded-2xl shadow-lg shadow-indigo-100 transition-all">
+                        開始隨機 5 題測驗
+                    </button>
+                </div>
+
+                <!-- 測驗進行面板 -->
+                <div id="quiz-active-panel" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <!-- 進度與計分 -->
+                    <div class="flex justify-between items-center text-xs text-slate-500 font-semibold">
+                        <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full" id="quiz-progress-text">問題 1 / 5</span>
+                        <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full" id="quiz-current-score">得分: 0 分</span>
+                    </div>
+
+                    <!-- 進度條 -->
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                    </div>
+
+                    <!-- 問題區 -->
+                    <div class="space-y-4">
+                        <span id="quiz-question-category" class="text-[10px] font-bold uppercase tracking-wider text-indigo-500 bg-indigo-50 px-2 py-1 rounded">CATEGORY</span>
+                        <h3 id="quiz-question-title" class="text-lg font-bold text-slate-800 leading-snug">問題內容載入中...</h3>
+                    </div>
+
+                    <!-- 選項按鈕 -->
+                    <div class="grid grid-cols-1 gap-3.5" id="quiz-options-container">
+                        <!-- 選項 JS 動態生成 -->
+                    </div>
+
+                    <!-- 回饋區 -->
+                    <div id="quiz-feedback" class="hidden p-4 rounded-xl text-xs font-semibold transition-all">
+                        回饋訊息
+                    </div>
+
+                    <!-- 下一步 -->
+                    <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl transition-all text-sm">
+                        下一題 ➔
+                    </button>
+                </div>
+
+                <!-- 測驗完成面板 -->
+                <div id="quiz-result-panel" class="hidden bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-6 shadow-sm">
+                    <div class="text-5xl" id="quiz-result-emoji">🎉</div>
+                    <div class="space-y-2">
+                        <h3 class="font-extrabold text-xl text-slate-900">挑戰完成！</h3>
+                        <p class="text-sm text-slate-500" id="quiz-result-summary">獲得分數載入中...</p>
+                    </div>
+                    <div class="max-w-xs mx-auto p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs text-slate-500 leading-relaxed" id="quiz-result-review">
+                        加油！繼續熟記怕渴英文單字庫，並多跟 NotebookLM AI 對話，實力會突飛猛進喔！
+                    </div>
+                    <div class="flex justify-center space-x-3">
+                        <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-5 py-3 rounded-2xl transition-all shadow-md shadow-indigo-100">
+                            重新挑戰
+                        </button>
+                        <button onclick="switchTab('library')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-5 py-3 rounded-2xl transition-all">
+                            返回單字庫
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 4: NotebookLM AI 文件對話 (Chat) -->
+            <section id="tab-chat" class="hidden flex-1 flex flex-col min-h-0 tab-content h-full">
+                <!-- 整個對話視窗的主容器 -->
+                <div class="flex-1 flex flex-col md:flex-row bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm h-full min-h-[500px]">
+                    
+                    <!-- 左側 NotebookLM 文件管理器 (Sources) -->
+                    <div class="w-full md:w-64 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col h-1/3 md:h-full shrink-0">
+                        <!-- 文件列標頭 -->
+                        <div class="p-4 border-b border-slate-200 bg-white">
+                            <h3 class="font-bold text-xs text-slate-800 flex items-center space-x-2">
+                                <span class="p-1 bg-indigo-50 text-indigo-600 rounded">📂</span>
+                                <span>NotebookLM 資料來源 (5)</span>
+                            </h3>
+                            <p class="text-[10px] text-slate-400 mt-1">已成功掛載怕渴英文影片逐字稿與筆記</p>
+                        </div>
+                        
+                        <!-- 來源列表 -->
+                        <div class="flex-1 overflow-y-auto p-3 space-y-2 no-scrollbar">
+                            <div onclick="openSourcePreview(0)" class="p-2.5 bg-white hover:bg-indigo-50/50 border border-slate-200 rounded-xl cursor-pointer transition-all flex items-start space-x-2.5">
+                                <span class="text-lg">📝</span>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-semibold text-xs text-slate-700 truncate">11/23 TOEIC Online Class.txt</h4>
+                                    <p class="text-[9px] text-indigo-600 mt-0.5">多益文法與實戰班</p>
+                                </div>
+                            </div>
+                            <div onclick="openSourcePreview(1)" class="p-2.5 bg-white hover:bg-indigo-50/50 border border-slate-200 rounded-xl cursor-pointer transition-all flex items-start space-x-2.5">
+                                <span class="text-lg">💻</span>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-semibold text-xs text-slate-700 truncate">TOEIC_Unit56_Computers.csv</h4>
+                                    <p class="text-[9px] text-indigo-600 mt-0.5">電腦科技專用單字</p>
+                                </div>
+                            </div>
+                            <div onclick="openSourcePreview(2)" class="p-2.5 bg-white hover:bg-indigo-50/50 border border-slate-200 rounded-xl cursor-pointer transition-all flex items-start space-x-2.5">
+                                <span class="text-lg">📁</span>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-semibold text-xs text-slate-700 truncate">TOEIC_Unit54_OfficeSupplies.txt</h4>
+                                    <p class="text-[9px] text-indigo-600 mt-0.5">商務辦公室用品字彙</p>
+                                </div>
+                            </div>
+                            <div onclick="openSourcePreview(3)" class="p-2.5 bg-white hover:bg-indigo-50/50 border border-slate-200 rounded-xl cursor-pointer transition-all flex items-start space-x-2.5">
+                                <span class="text-lg">🎓</span>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-semibold text-xs text-slate-700 truncate">IELTS_Unit20_CampusLife.pdf</h4>
+                                    <p class="text-[9px] text-indigo-600 mt-0.5">校園生活必考字彙組</p>
+                                </div>
+                            </div>
+                            <div onclick="openSourcePreview(4)" class="p-2.5 bg-white hover:bg-indigo-50/50 border border-slate-200 rounded-xl cursor-pointer transition-all flex items-start space-x-2.5">
+                                <span class="text-lg">📚</span>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-semibold text-xs text-slate-700 truncate">IELTS_Unit24_Literature.txt</h4>
+                                    <p class="text-[9px] text-indigo-600 mt-0.5">文學與出版核心單字</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 簡單提示 -->
+                        <div class="p-3 bg-indigo-900 text-white text-[10px] m-3 rounded-xl space-y-1">
+                            <span class="font-bold">✨ NotebookLM 技術支援</span>
+                            <p class="text-indigo-200 leading-relaxed">您的提問將由 AI 解析，並只從上方 5 份怕渴英文文檔中進行回答與標註。</p>
+                        </div>
+                    </div>
+
+                    <!-- 右側對話面板 -->
+                    <div class="flex-1 flex flex-col h-2/3 md:h-full min-w-0">
+                        <!-- 對話視窗頂部欄 -->
+                        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-white shrink-0">
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">與怕渴英文 AI 智慧助教對話</h3>
+                                <p class="text-xs text-slate-400">專屬針對多益、雅思以及文法系列課程進行諮詢</p>
+                            </div>
+                            <!-- 清空對話按鈕 -->
+                            <button onclick="clearChatHistory()" class="text-xs text-rose-500 hover:text-rose-600 font-semibold flex items-center space-x-1 py-1 px-2 hover:bg-rose-50 rounded-lg transition-all">
+                                <span>🗑️ 清空歷史</span>
+                            </button>
+                        </div>
+
+                        <!-- 訊息呈現區 -->
+                        <div id="chat-messages-container" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50 no-scrollbar">
+                            <!-- 預設歡迎訊息 -->
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                                    P
+                                </div>
+                                <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] sm:max-w-[75%] space-y-2">
+                                    <p class="text-sm text-slate-800 leading-relaxed">同學你好！我是怕渴英文的 AI 自學助教。我已經完全掌握了上傳的 5 份多益與雅思文件，歡迎向我詢問關於複合名詞文法規則、電腦與辦公用品單字，或者校園生活雅思字彙的任何問題！</p>
+                                    <div class="text-[10px] text-indigo-600 font-semibold bg-indigo-50 inline-block px-2 py-0.5 rounded-md">NotebookLM 本地安全沙盒</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 快捷問題啟動器 -->
+                        <div class="px-6 py-2 bg-white border-t border-slate-100 flex flex-wrap gap-2 shrink-0">
+                            <button onclick="quickAsk('專有名詞可以拿來當複合名詞的前者嗎？請依據11/23線上課回答')" class="bg-slate-50 hover:bg-slate-100 hover:text-indigo-600 text-[10.5px] text-slate-500 px-3 py-1.5 rounded-full border border-slate-200 transition-all font-medium">💬 專有名詞可以用作複合名詞嗎？</button>
+                            <button onclick="quickAsk('請列出多益56單元「電腦」的所有單字、詞性與翻譯')" class="bg-slate-50 hover:bg-slate-100 hover:text-indigo-600 text-[10.5px] text-slate-500 px-3 py-1.5 rounded-full border border-slate-200 transition-all font-medium">💬 列出多益56電腦單字</button>
+                            <button onclick="quickAsk('解釋雅思單字 abstract 的用法與例句')" class="bg-slate-50 hover:bg-slate-100 hover:text-indigo-600 text-[10.5px] text-slate-500 px-3 py-1.5 rounded-full border border-slate-200 transition-all font-medium">💬 abstract 怎麼用？</button>
+                            <button onclick="quickAsk('如何判斷 11/23 課程中所講的形容詞子句與名詞子句？')" class="bg-slate-50 hover:bg-slate-100 hover:text-indigo-600 text-[10.5px] text-slate-500 px-3 py-1.5 rounded-full border border-slate-200 transition-all font-medium">💬 判斷形容詞與名詞子句</button>
+                        </div>
+
+                        <!-- 輸入框與發送 -->
+                        <div class="p-4 bg-white border-t border-slate-200 shrink-0">
+                            <div class="relative flex items-center">
+                                <input type="text" id="chat-input-field" onkeypress="handleChatKeyPress(event)" placeholder="請輸入對知識庫文件的問題... (例: compatible 怎麼用?)" class="w-full pl-4 pr-12 py-3.5 bg-slate-100 focus:bg-white border border-transparent focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all rounded-2xl text-sm focus:outline-none">
+                                <button onclick="sendChatMessage()" class="absolute right-2 p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-md transition-all">
+                                    <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 5: 常見問答 (FAQ) -->
+            <section id="tab-faq" class="hidden max-w-4xl mx-auto space-y-6 tab-content">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-bold text-slate-900">學員文法與課程常見 FAQ 專區</h2>
+                    <p class="text-sm text-slate-500">精心收錄了 11/23 怕渴線上課程學員提問，以及多益、雅思考試中的常見文法與單字混淆點。</p>
+                </div>
+
+                <div class="space-y-4" id="faq-accordions-container">
+                    <!-- FAQ 項目由 JS 渲染，支援動態摺疊 -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 底部移動端導航 (限行動端顯示) -->
+    <nav class="lg:hidden bg-white border-t border-slate-200 h-16 shrink-0 z-30 flex items-center justify-around px-2">
+        <button onclick="switchTab('dashboard')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+            <span class="text-[9px] mt-1 font-semibold">首頁</span>
+        </button>
+        <button onclick="switchTab('library')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <span class="text-[9px] mt-1 font-semibold">資源庫</span>
+        </button>
+        <button onclick="switchTab('quiz')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[9px] mt-1 font-semibold">模擬測驗</span>
+        </button>
+        <button onclick="switchTab('chat')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-[9px] mt-1 font-semibold">AI對話</span>
+        </button>
+        <button onclick="switchTab('faq')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[9px] mt-1 font-semibold">FAQ</span>
+        </button>
+    </nav>
+
+    <!-- NotebookLM 檔案來源預覽 Modal -->
+    <div id="source-preview-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[80vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <div class="flex items-center space-x-2.5">
+                    <span class="text-2xl" id="source-preview-icon">📄</span>
+                    <div>
+                        <h3 class="font-bold text-slate-900" id="source-preview-title">檔案標題</h3>
+                        <p class="text-xs text-slate-400" id="source-preview-tag">標籤類別</p>
+                    </div>
+                </div>
+                <button onclick="closeSourcePreview()" class="text-slate-400 hover:text-slate-600 p-1 bg-slate-50 hover:bg-slate-100 rounded-full transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 space-y-4 text-sm text-slate-600 leading-relaxed bg-slate-50" id="source-preview-content">
+                <!-- 內容動態填充 -->
+            </div>
+            <div class="p-4 border-t border-slate-100 flex justify-end bg-white">
+                <button onclick="closeSourcePreview()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs py-2 px-4 rounded-xl transition-all">
+                    關閉文件
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自定義系統消息 Box (代替 browser alert) -->
+    <div id="custom-alert-box" class="hidden fixed bottom-6 right-6 bg-slate-950 text-white px-5 py-4 rounded-2xl shadow-2xl z-50 flex items-center space-x-3.5 border border-slate-800 transition-all duration-300 transform translate-y-2">
+        <span class="text-xl" id="custom-alert-emoji">💡</span>
+        <div>
+            <p class="text-xs text-slate-400 font-semibold" id="custom-alert-title">通知</p>
+            <p class="text-sm text-white font-semibold" id="custom-alert-message">訊息內容</p>
+        </div>
+    </div>
+
+    <!-- 腳本邏輯 -->
+    <script>
+        // ==========================================
+        // 核心知識庫數據 (源自上傳文件逐字稿與單字彙整)
+        // ==========================================
+        const PARKER_DOCUMENTS = [
+            {
+                id: 0,
+                title: "11/23 TOEIC Online Class.txt",
+                category: "多益線上文法實戰班",
+                icon: "📝",
+                rawText: `即將進考場的各位，這篇是 11/23 多益線上實戰班重點摘要！\n\n【核心文法 1：複合名詞 (Compound Nouns) 的神祕限制】\n- 學員提問：「形容詞修飾名詞，與名詞修飾名詞（複合名詞）差在哪？那如果我用公司名稱或人名呢？」\n- 怕渴老師解答：兩個一般名詞放一起，比如「客服」customer service，這完全沒問題！\n- 但是！專有名詞（像是 Apple、Microsoft 等公司品牌名稱或特定人民姓名）「絕對不能」拿來當作複合名詞的前者！不可以用公司品牌或人名來創造複合名詞，這是大家最容易在多益考卷上跌入的陷阱！\n\n【核心文法 2：如何區分形容詞子句 vs 名詞子句】\n- 訣竅：利用引導詞「that」後面接的句子是「完整」還是「不完整」來快速作答。\n- W 引導詞引導的子句，由於不一定誰的後面就完整，則需要依據引導詞本身在子句中扮演的角色進行分析。`,
+                highlights: ["複合名詞專有詞限制", "that子句完整性判斷"]
+            },
+            {
+                id: 1,
+                title: "TOEIC_Unit56_Computers.csv",
+                category: "多益單字: 56 電腦 (Computers)",
+                icon: "💻",
+                rawText: `以下為 56 電腦 (Computers) 章節的核心必考多益單字：\n\n1. compatible (adj.) 相容的\n   例句: The power cable I just bought is not compatible with my tablet.\n2. laptop (n.) 手提電腦\n   例句: The camera is linked to my laptop with a wireless transmitter.\n3. program (n.) 程式/計劃\n   例句: The grammar learning program is intended for high school students only.\n4. cable (n.) 電纜/纜線\n   例句: The company is trying to bring cable TV shows to the internet.\n5. access (n.) 使用權/管道\n   例句: Distributors often complain they don't have easy access to pricing information.\n6. reset (v.) 重設\n   例句: I would like my computer to be reset back to default condition.\n7. database (n.) 資料庫\n   例句: This position also requires familiarity with database software.\n8. online (adj./adv.) 線上\n   例句: This training institute offers online courses.\n9. virus (n.) 病毒\n   例句: Such steps can effectively help to slow the spread of the virus.\n10. delete (v.) 刪除\n   例句: In accordance with our privacy policy, we will delete all user data after the service.`,
+                highlights: ["compatible", "access", "database", "reset"]
+            },
+            {
+                id: 2,
+                title: "TOEIC_Unit54_OfficeSupplies.txt",
+                category: "多益單字: 54 辦公用品 (Office Supplies)",
+                icon: "📁",
+                rawText: `以下為 54 辦公用品 (Office Supplies) 核心語彙：\n\n1. bulletin board (n.) 佈告欄\n   例句: Check on the bulletin board to see any new announcements.\n2. scanner (n.) 掃描器\n   例句: All the books can be turned into digital files with the scanner.\n3. extension (n.) 分機/延期\n   例句: We reached an agreement on a contract extension with the supplier.\n4. manuscript (n.) 手稿/原稿\n   例句: His novels were only circulated among his acquaintances in manuscript form.\n5. filing cabinet (n.) 檔案櫃\n   例句: The new filing cabinet requires some basic assembly.\n6. folder (n.) 文件夾\n   例句: The most commonly used folders are stored in the top cabinet.`,
+                highlights: ["bulletin board", "extension", "filing cabinet"]
+            },
+            {
+                id: 3,
+                title: "IELTS_Unit20_CampusLife.pdf",
+                category: "雅思字彙: Unit 20 校園生活 (Campus Life)",
+                icon: "🎓",
+                rawText: `雅思學術組必考：Unit 20 校園生活語彙精選：\n\n1. seminar (n.) 專題研討會\n   例句: The seminar covered a wide range of topics including marketing strategies and leadership skills.\n2. abstract (n./adj.) 摘要/抽象的\n   例句: The professor suggested we provide more specific examples to make these abstract arguments more convincing.\n3. dormitory hall (n.) 宿舍大樓\n   例句: Our university provides shuttle services between the halls and academic buildings.\n4. profound (adj.) 深刻的/深遠的\n   例句: Chat GPT has had a profound impact on natural language processing.\n5. syllabus (n.) 教學大綱/課程大綱\n   例句: Our school's website features a user-friendly interface where students can easily access the syllabus for each subject.\n6. essay (n.) 論文/文章\n   例句: The professor asked us to write an essay on the role of government in addressing income inequality.\n7. assignment (n.) 作業/任務\n   例句: The assignment required students to analyze data using statistical software.\n8. punctual (adj.) 準時的\n   例句: Riley's failure to be punctual for her job interviews cost her many potential opportunities.\n9. semester (n.) 學期\n   例句: The semester is divided into two parts: theory and practical application.`,
+                highlights: ["seminar", "abstract", "syllabus", "semester"]
+            },
+            {
+                id: 4,
+                title: "IELTS_Unit24_Literature.txt",
+                category: "雅思字彙: Unit 24 文學出版 (Literature & Publication)",
+                icon: "📚",
+                rawText: `雅思學術必考：Unit 24 文學出版詞彙：\n\n1. context (n.) 上下文/背景\n   例句: Children hear words they don't know and use the context to supplement the meaning of the words.\n2. brochure (n.) 小冊子\n   例句: Since 1991 we have occasionally asked professional copywriters to help us compile our brochure.\n3. literary (adj.) 文學的\n   例句: Computer programs now qualify for copyright protection just as any other literary work.\n4. complex (adj.) 複雜的\n   例句: His skill lies in his ability to communicate quite complex ideas very simply.\n5. summarize (v.) 概述/總結\n   例句: The note summarizes the complicated articles in the textbook and provides many review questions.\n6. bibliography (n.) 參考書目\n   例句: To gain a thorough understanding, the reader is referred to the bibliography.`,
+                highlights: ["context", "brochure", "bibliography"]
+            }
+        ];
+
+        // FAQ 數據
+        const FAQ_DATA = [
+            {
+                question: "什麼是 11/23 線上課程中強調的「複合名詞」專有名詞限制？",
+                answer: "在怕渴多益線上課程中，老師特別叮嚀：兩個一般名詞（例如 customer service, parking meter）能拼在一起形成複合名詞。但是，<b>專有名詞（像公司品牌名稱 Apple、個人姓名等）絕對不可以用作複合名詞的前者</b>。在多益考試中，這是一個十分高頻的單字文法盲區，需要十分警惕！"
+            },
+            {
+                question: "compatible 的介系詞該如何搭配？",
+                answer: "單字 compatible (相容的) 在多益聽力或閱讀測驗中，固定搭配的介系詞為 <b>with</b>。例如：The power cable is not compatible <b>with</b> my tablet. (這條電源線與我的平板不相容。)"
+            },
+            {
+                question: "雅思單字裡的 abstract 指的是什麼？",
+                answer: "在學術校園生活中，<b>abstract</b> 可以當名詞，指學術論文或研究報告的「<b>摘要</b>」；也可以當形容詞，指「<b>抽象的</b>」（與具體 concrete 相反）。例句：The professor suggested we provide more specific examples to make these abstract arguments more convincing. (教授建議我們提供更多具體例子，好讓這些抽象的論點更具說服力。)"
+            },
+            {
+                question: "如何快速區別雅思單字中的 seminar 與 semester？",
+                answer: "這兩個字極易混淆：<br>1. <b>Seminar</b>：名詞，指「<b>專題研討會 / 討論會</b>」。（例：The seminar covered leadership skills.）<br>2. <b>Semester</b>：名詞，指「<b>學期</b>」。（例：The semester is divided into two parts.）"
+            },
+            {
+                question: "動詞片語中的 account for 有哪些重要含意？",
+                answer: "在怕渴英文 Unit 81 動詞片語中，<b>account for</b> 在商務多益中極其高頻，常見有兩大含意：<br>1. <b>解釋、說明原因</b>（例：Doris was asked to account for the drop in sales. Doris被要求解釋銷售額下滑的原因。）<br>2. <b>佔（比例）</b>（例：Online shopping sites account for 60 percent of delivery parcels. 線上購物網站佔了中國配送包裹的百分之六十。）"
+            }
+        ];
+
+        // 合併所有單字以供閃卡和測驗使用
+        let ALL_VOCAB_DATABASE = [];
+        PARKER_DOCUMENTS.forEach(doc => {
+            if (doc.rawText.includes("例句")) {
+                // 利用正則或結構化方式抽離單字，這裡使用精準的人工校對後數據做實時快取
+            }
+        });
+
+        // 精準單字結構體
+        ALL_VOCAB_DATABASE = [
+            { word: "compatible", pos: "adj.", trans: "相容的", example: "The power cable I just bought is not compatible with my tablet.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "laptop", pos: "n.", trans: "手提電腦", example: "The camera is linked to my laptop with a wireless transmitter.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "program", pos: "n.", trans: "程式/計劃", example: "The grammar learning program is intended for high school students only.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "access", pos: "n.", trans: "使用權/管道", example: "Distributors often complain they don't have easy access to pricing information.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "reset", pos: "v.", trans: "重設", example: "I would like my computer to be reset back to default condition.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "database", pos: "n.", trans: "資料庫", example: "This position also requires familiarity with database software.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "up to date", pos: "adj.", trans: "最新的", example: "The newsletter is to provide up-to-date information about our products.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "virus", pos: "n.", trans: "病毒", example: "Such steps can effectively help to slow the spread of the virus.", category: "TOEIC", source: "多益 56 電腦" },
+            { word: "delete", pos: "v.", trans: "刪除", example: "In accordance with our privacy policy, we will delete all user data.", category: "TOEIC", source: "多益 56 電腦" },
+            
+            { word: "bulletin board", pos: "n.", trans: "佈告欄", example: "Check on the bulletin board to see any new announcements concerning the committee.", category: "TOEIC", source: "多益 54 辦公用品" },
+            { word: "scanner", pos: "n.", trans: "掃描器", example: "All the books can be turned into digital files with the scanner.", category: "TOEIC", source: "多益 54 辦公用品" },
+            { word: "extension", pos: "n.", trans: "分機/延期", example: "We reached an agreement on a contract extension with the supplier in boston.", category: "TOEIC", source: "多益 54 辦公用品" },
+            { word: "manuscript", pos: "n.", trans: "手稿/原稿", example: "His novels were only circulated among his acquaintances in manuscript form.", category: "TOEIC", source: "多益 54 辦公用品" },
+            { word: "filing cabinet", pos: "n.", trans: "檔案櫃", example: "The new filing cabinet requires some basic assembly.", category: "TOEIC", source: "多益 54 辦公用品" },
+            
+            { word: "seminar", pos: "n.", trans: "專題研討會", example: "The seminar covered a wide range of topics including marketing strategies.", category: "IELTS", source: "雅思 20 校園生活" },
+            { word: "abstract", pos: "n./adj.", trans: "摘要/抽象的", example: "The professor suggested that we provide more specific examples.", category: "IELTS", source: "雅思 20 校園生活" },
+            { word: "dormitory hall", pos: "n.", trans: "宿舍大樓", example: "Our university provides shuttle services between the halls and academic buildings.", category: "IELTS", source: "雅思 20 校園生活" },
+            { word: "syllabus", pos: "n.", trans: "教學大綱", example: "Our website features an interface where students can easily access the syllabus.", category: "IELTS", source: "雅思 20 校園生活" },
+            { word: "essay", pos: "n.", trans: "短論/作文", example: "The professor asked us to write an essay on income inequality.", category: "IELTS", source: "雅思 20 校園生活" },
+            { word: "punctual", pos: "adj.", trans: "準時的", example: "Riley's failure to be punctual for her job interviews cost her many opportunities.", category: "IELTS", source: "雅思 20 校園生活" },
+            { word: "semester", pos: "n.", trans: "學期", example: "The semester is divided into two parts: theory and practical application.", category: "IELTS", source: "雅思 20 校園生活" },
+
+            { word: "context", pos: "n.", trans: "上下文", example: "Children hear words they don't know and use the context to supplement meaning.", category: "IELTS", source: "雅思 24 文學出版" },
+            { word: "brochure", pos: "n.", trans: "小冊子", example: "Since 1991 we have occasionally asked copywriters to help compile our brochure.", category: "IELTS", source: "雅思 24 文學出版" },
+            { word: "literary", pos: "adj.", trans: "文學的", example: "Computer programs now qualify for copyright protection just as other literary work.", category: "IELTS", source: "雅思 24 文學出版" },
+            { word: "summarize", pos: "v.", trans: "總結", example: "The note summarizes the complicated articles in the textbook.", category: "IELTS", source: "雅思 24 文學出版" },
+            { word: "bibliography", pos: "n.", trans: "參考書目", example: "The reader is referred to the bibliography to gain thorough understanding.", category: "IELTS", source: "雅思 24 文學出版" },
+
+            { word: "account for", pos: "phr v.", trans: "解釋/佔比例", example: "The manager asked Doris to account for the sharp drop in sales in the first quarter.", category: "phr", source: "單字 81 動詞片語" },
+            { word: "comply with", pos: "phr v.", trans: "遵守", example: "The installation of a ventilation system must comply with building regulations.", category: "phr", source: "單字 81 動詞片語" },
+            { word: "adhere to", pos: "phr v.", trans: "遵守/堅持", example: "Anyone submitting an article must adhere strictly to the copyright policies.", category: "phr", source: "單字 81 動詞片語" },
+            { word: "sign up for", pos: "phr v.", trans: "報名", example: "Interested employees can sign up for the training program.", category: "phr", source: "單字 81 動詞片語" }
+        ];
+
+        // ==========================================
+        // 初始化載入狀態
+        // ==========================================
+        let reviewList = []; // 自定義複習單字
+
+        window.onload = function() {
+            // 渲染首頁小地圖
+            renderDashboardCards();
+            // 渲染資源庫單字閃卡
+            renderLibraryCards(ALL_VOCAB_DATABASE);
+            // 渲染 FAQ 摺疊面板
+            renderFAQ();
+            // 監聽並自動適應視窗調整
+            window.addEventListener('resize', handleCanvasResize);
+        };
+
+        function handleCanvasResize() {
+            // 如有 canvas 動態繪製可在此處調整，保持佈局彈性
+        }
+
+        // ==========================================
+        // 頁籤切換控制 (SPA 模式)
+        // ==========================================
+        function switchTab(tabId) {
+            // 隱藏所有頁籤內容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            // 顯示當前選定頁籤
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) {
+                activeTab.classList.remove('hidden');
+            }
+
+            // 更新側邊欄與底部導航欄的高亮狀態
+            // 側邊
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900";
+            });
+            const activeNavBtn = document.getElementById(`nav-${tabId}`);
+            if (activeNavBtn) {
+                activeNavBtn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-50 text-indigo-700";
+            }
+            // 移動端底部
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.replace('text-indigo-600', 'text-slate-400');
+            });
+            const buttons = document.querySelectorAll('.mobile-nav-btn');
+            const indexMap = { 'dashboard': 0, 'library': 1, 'quiz': 2, 'chat': 3, 'faq': 4 };
+            if (buttons[indexMap[tabId]]) {
+                buttons[indexMap[tabId]].classList.replace('text-slate-400', 'text-indigo-600');
+            }
+        }
+
+        // ==========================================
+        // 系統消息通知 UI (代替 alert)
+        // ==========================================
+        function showNotification(title, message, emoji = "💡") {
+            const alertBox = document.getElementById('custom-alert-box');
+            const alertTitle = document.getElementById('custom-alert-title');
+            const alertMessage = document.getElementById('custom-alert-message');
+            const alertEmoji = document.getElementById('custom-alert-emoji');
+
+            alertTitle.innerText = title;
+            alertMessage.innerText = message;
+            alertEmoji.innerText = emoji;
+
+            alertBox.classList.remove('hidden');
+            alertBox.classList.add('flex');
+
+            // 3秒後自動消失
+            setTimeout(() => {
+                alertBox.classList.remove('flex');
+                alertBox.classList.add('hidden');
+            }, 3000);
+        }
+
+        // ==========================================
+        // 全局搜尋引擎
+        // ==========================================
+        function handleGlobalSearch(isMobile = false) {
+            const inputId = isMobile ? 'mobile-global-search' : 'global-search';
+            const dropdownId = isMobile ? 'mobile-search-results-dropdown' : 'search-results-dropdown';
+            const query = document.getElementById(inputId).value.trim().toLowerCase();
+            const dropdown = document.getElementById(dropdownId);
+
+            if (!query) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            dropdown.classList.remove('hidden');
+            dropdown.innerHTML = '';
+
+            // 搜尋單字庫
+            const matchedWords = ALL_VOCAB_DATABASE.filter(item => 
+                item.word.toLowerCase().includes(query) || 
+                item.trans.toLowerCase().includes(query)
+            );
+
+            // 搜尋 FAQ
+            const matchedFAQs = FAQ_DATA.filter(faq => 
+                faq.question.toLowerCase().includes(query) ||
+                faq.answer.toLowerCase().includes(query)
+            );
+
+            if (matchedWords.length === 0 && matchedFAQs.length === 0) {
+                dropdown.innerHTML = `<p class="text-xs text-slate-400 p-3 text-center">查無此關鍵字之教材內容喔～</p>`;
+                return;
+            }
+
+            // 渲染單字搜尋結果
+            if (matchedWords.length > 0) {
+                const vocabHeader = document.createElement('div');
+                vocabHeader.className = "text-[10px] font-bold text-slate-400 px-3 py-1 bg-slate-50 rounded-lg uppercase tracking-wider";
+                vocabHeader.innerText = "匹配核心單字";
+                dropdown.appendChild(vocabHeader);
+
+                matchedWords.forEach(w => {
+                    const row = document.createElement('div');
+                    row.className = "flex justify-between items-center p-2.5 hover:bg-slate-50 cursor-pointer rounded-xl transition-all border-b border-slate-100 last:border-0";
+                    row.onclick = () => {
+                        switchTab('library');
+                        filterLibrary('all');
+                        dropdown.classList.add('hidden');
+                        document.getElementById(inputId).value = '';
+                        showNotification("已為您定位單字", `${w.word} 💡`, "📚");
+                    };
+                    row.innerHTML = `
+                        <div class="min-w-0">
+                            <p class="font-bold text-xs text-slate-800">${w.word} <span class="text-[10px] font-medium text-slate-400">${w.pos}</span></p>
+                            <p class="text-[11px] text-slate-500 truncate">${w.example}</p>
+                        </div>
+                        <span class="shrink-0 bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-md ml-2">${w.trans}</span>
+                    `;
+                    dropdown.appendChild(row);
+                });
+            }
+
+            // 渲染 FAQ 搜尋結果
+            if (matchedFAQs.length > 0) {
+                const faqHeader = document.createElement('div');
+                faqHeader.className = "text-[10px] font-bold text-slate-400 px-3 py-1 bg-slate-50 rounded-lg uppercase tracking-wider mt-2";
+                faqHeader.innerText = "匹配文法 FAQ";
+                dropdown.appendChild(faqHeader);
+
+                matchedFAQs.forEach(faq => {
+                    const row = document.createElement('div');
+                    row.className = "p-2.5 hover:bg-slate-50 cursor-pointer rounded-xl transition-all border-b border-slate-100 last:border-0";
+                    row.onclick = () => {
+                        switchTab('faq');
+                        dropdown.classList.add('hidden');
+                        document.getElementById(inputId).value = '';
+                    };
+                    row.innerHTML = `
+                        <p class="font-bold text-xs text-indigo-600 truncate">❓ ${faq.question}</p>
+                        <p class="text-[11px] text-slate-500 truncate">${faq.answer.replace(/<[^>]*>/g, '')}</p>
+                    `;
+                    dropdown.appendChild(row);
+                });
+            }
+        }
+
+        // ==========================================
+        // 儀表板看板渲染
+        // ==========================================
+        function renderDashboardCards() {
+            const grid = document.getElementById('dashboard-resource-grid');
+            grid.innerHTML = '';
+            
+            // 隨機選出4個核心資源包
+            const categories = [
+                { title: "多益 Unit 56 電腦科技", desc: "compatible, database, up to date...", count: "10 個核心單字", bg: "from-blue-500 to-indigo-600", filter: "TOEIC" },
+                { title: "多益 Unit 54 辦公用品", desc: "bulletin board, extension, photocopier...", count: "6 個必備單字", bg: "from-amber-500 to-orange-600", filter: "TOEIC" },
+                { title: "雅思 Unit 20 校園生活", desc: "seminar, abstract, dormitory, essay...", count: "9 個精選單字", bg: "from-emerald-500 to-teal-600", filter: "IELTS" },
+                { title: "雅思 Unit 24 文學與出版", desc: "context, brochure, bibliography, summary...", count: "6 個學術單字", bg: "from-rose-500 to-pink-600", filter: "IELTS" }
+            ];
+
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 shadow-sm transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between";
+                card.onclick = () => {
+                    switchTab('library');
+                    filterLibrary(cat.filter);
+                };
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <span class="text-[9px] uppercase font-bold tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full inline-block">怕渴講義精選</span>
+                        <h4 class="font-bold text-sm text-slate-800 mt-1">${cat.title}</h4>
+                        <p class="text-xs text-slate-400 font-medium truncate">${cat.desc}</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-50">
+                        <span class="text-xs text-slate-500 font-semibold">${cat.count}</span>
+                        <span class="text-xs text-indigo-600 font-bold flex items-center space-x-1 hover:underline">
+                            <span>學習去</span> <span>➔</span>
+                        </span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // 資源庫 & 單字閃卡 (Flashcards) 模組
+        // ==========================================
+        let currentFilter = 'all';
+
+        function filterLibrary(category) {
+            currentFilter = category;
+            
+            // 更新篩選按鈕樣式
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all";
+            });
+            
+            // 點擊高亮
+            event.target.className = "filter-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-100 transition-all";
+
+            const filteredData = category === 'all' 
+                ? ALL_VOCAB_DATABASE 
+                : ALL_VOCAB_DATABASE.filter(item => item.category === category);
+
+            renderLibraryCards(filteredData);
+        }
+
+        function renderLibraryCards(words) {
+            const grid = document.getElementById('library-grid');
+            grid.innerHTML = '';
+
+            words.forEach((w, index) => {
+                const card = document.createElement('div');
+                card.className = "perspective-1000 w-full h-56 group";
+                
+                // 檢查是否在複習名單中
+                const inReview = reviewList.some(item => item.word === w.word);
+                const starColor = inReview ? 'text-amber-500' : 'text-slate-300 hover:text-amber-400';
+
+                card.innerHTML = `
+                    <div class="transform-style-3d duration-500 relative w-full h-full cursor-pointer rounded-2xl border border-slate-200/80 shadow-sm group-hover:shadow-md" id="card-inner-${index}">
+                        
+                        <!-- 正面 (English Word) -->
+                        <div class="backface-hidden absolute inset-0 bg-white p-5 rounded-2xl flex flex-col justify-between" onclick="flipCard(${index})">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[10px] font-extrabold uppercase bg-slate-100 text-slate-500 px-2.5 py-1 rounded-md tracking-wider">${w.source}</span>
+                                <button onclick="toggleReview(${index}, event)" class="p-1.5 bg-slate-50 rounded-lg hover:bg-slate-100 transition-all shrink-0">
+                                    <svg class="w-4 h-4 ${starColor}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                </button>
+                            </div>
+                            <div class="space-y-1 my-auto text-center">
+                                <h3 class="text-2xl font-black text-slate-800 tracking-tight">${w.word}</h3>
+                                <p class="text-xs text-slate-400 font-medium italic">${w.pos}</p>
+                            </div>
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-50 text-[10px] text-slate-400">
+                                <span>💡 點擊卡片翻轉中文</span>
+                                <button onclick="speakWord('${w.word}', event)" class="p-1.5 hover:bg-slate-50 text-indigo-600 rounded-lg shrink-0 transition-all flex items-center space-x-1 font-semibold">
+                                    <span>🔊 發音</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 反面 (Chinese Translation & Example) -->
+                        <div class="rotate-y-180 backface-hidden absolute inset-0 bg-slate-900 text-white p-5 rounded-2xl flex flex-col justify-between" onclick="flipCard(${index})">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-bold uppercase bg-indigo-500/25 text-indigo-300 border border-indigo-400/20 px-2 py-0.5 rounded-md">單字意涵</span>
+                                <span class="text-xs font-black text-emerald-400">${w.trans}</span>
+                            </div>
+                            <div class="space-y-2 my-auto">
+                                <p class="text-xs font-medium text-slate-300 leading-relaxed border-l-2 border-indigo-500 pl-3 italic">"${w.example}"</p>
+                            </div>
+                            <div class="text-[10px] text-slate-400 text-center pt-3 border-t border-slate-800">
+                                點擊任意處翻轉回正面
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 閃卡翻轉效果
+        function flipCard(index) {
+            const inner = document.getElementById(`card-inner-${index}`);
+            if (inner.classList.contains('rotate-y-180')) {
+                inner.classList.remove('rotate-y-180');
+            } else {
+                inner.classList.add('rotate-y-180');
+            }
+        }
+
+        // 真人發音模組 (利用 Web Speech API)
+        function speakWord(word, event) {
+            if (event) event.stopPropagation(); // 阻止氣泡事件翻轉卡片
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; // 稍慢利於跟讀學習
+                window.speechSynthesis.cancel(); // 終止當前發音以免重疊
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showNotification("發音失敗", "您的瀏覽器不支援 Web Speech 發音功能", "⚠️");
+            }
+        }
+
+        // 加入或移除自訂複習清單
+        function toggleReview(index, event) {
+            if (event) event.stopPropagation();
+            const wordObj = ALL_VOCAB_DATABASE[index];
+            const foundIndex = reviewList.findIndex(item => item.word === wordObj.word);
+
+            if (foundIndex > -1) {
+                reviewList.splice(foundIndex, 1);
+                showNotification("已移除複習", `已從您的複習清單中移除 ${wordObj.word}`, "🗑️");
+            } else {
+                reviewList.push(wordObj);
+                showNotification("已加至複習", `已成功將 ${wordObj.word} 加至複習清單`, "⭐");
+            }
+
+            // 更新儀表板複習數
+            document.getElementById('stat-review-count').innerText = `${reviewList.length} 個單字`;
+            // 重新渲染該分類
+            filterLibrary(currentFilter);
+        }
+
+        // ==========================================
+        // 互動測驗 (Quiz Game) 模組
+        // ==========================================
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+
+        // 利用網頁自備 Web Audio API 合成答題音效 (答對/答錯)，不依賴外部素材
+        function playBeep(isSuccess) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                if (isSuccess) {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else {
+                    osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        function startQuiz() {
+            // 隱藏開始/結果面板，顯示作答面板
+            document.getElementById('quiz-start-panel').classList.add('hidden');
+            document.getElementById('quiz-result-panel').classList.add('hidden');
+            document.getElementById('quiz-active-panel').classList.remove('hidden');
+
+            // 隨機組建 5 題
+            quizQuestions = generateQuizQuestions();
+            currentQuestionIndex = 0;
+            quizScore = 0;
+
+            loadQuizQuestion();
+        }
+
+        function generateQuizQuestions() {
+            // 隨機打亂單字庫
+            const shuffled = [...ALL_VOCAB_DATABASE].sort(() => 0.5 - Math.random());
+            const selectedWords = shuffled.slice(0, 4);
+            
+            const questions = [];
+
+            // 1. 文意字彙題 (3 題)
+            selectedWords.forEach(w => {
+                // 將例句中的單字替換成底線
+                const maskedSentence = w.example.replace(new RegExp(w.word, 'gi'), "______");
+                
+                // 產生三個干擾項
+                const disturbers = ALL_VOCAB_DATABASE
+                    .filter(item => item.word !== w.word)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3)
+                    .map(item => item.word);
+                
+                const options = [...disturbers, w.word].sort(() => 0.5 - Math.random());
+
+                questions.push({
+                    type: "詞彙填空題",
+                    question: `請選出最符合下列句意的多益/雅思單字：\n\n"${maskedSentence}"`,
+                    answer: w.word,
+                    options: options,
+                    explanation: `正確答案為：${w.word} (${w.pos} ${w.trans})。例句：${w.example}`
+                });
+            });
+
+            // 2. 11/23 文法實戰班：複合名詞與子句文法題 (1 題)
+            questions.push({
+                type: "多益實戰文法題",
+                question: "根據 11/23 怕渴線上實戰班重點，關於『複合名詞 (Compound Nouns)』的文法限制，以下哪一項敘述是『正確』的？",
+                options: [
+                    "專有公司名稱或人民姓名，可以拿來作為複合名詞的前半部分。",
+                    "兩個一般名詞（例如 customer service）不能併置，中間必須加 dash ( - )。",
+                    "一般名詞可以直接併置，但專有名詞（如特定公司或人名）絕對不能當作複合名詞的前半部。",
+                    "多益考試不考複合名詞，所以不需理會專有與一般名詞差別。"
+                ],
+                answer: "一般名詞可以直接併置，但專有名詞（如特定公司或人名）絕對不能當作複合名詞的前半部。",
+                explanation: "怕渴老師叮嚀：客服 customer service 可以組成複合名詞；但專有名詞絕不能當複合名詞的前者修飾名詞。"
+            });
+
+            // 3. 翻譯選擇題 (1 題)
+            const transWord = shuffled[4] || shuffled[0];
+            const disturbersTrans = ALL_VOCAB_DATABASE
+                .filter(item => item.trans !== transWord.trans)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3)
+                .map(item => item.trans);
+            const transOptions = [...disturbersTrans, transWord.trans].sort(() => 0.5 - Math.random());
+
+            questions.push({
+                type: "核心翻譯題",
+                question: `單字「 ${transWord.word} 」的中文解釋最接近哪一個選項？`,
+                options: transOptions,
+                answer: transWord.trans,
+                explanation: `單字 ${transWord.word} (${transWord.pos}) 意為：${transWord.trans}。例句：${transWord.example}`
+            });
+
+            // 打亂 5 題的順序
+            return questions.sort(() => 0.5 - Math.random());
+        }
+
+        function loadQuizQuestion() {
+            const currentQ = quizQuestions[currentQuestionIndex];
+
+            // 更新 UI 進度
+            document.getElementById('quiz-progress-text').innerText = `問題 ${currentQuestionIndex + 1} / 5`;
+            document.getElementById('quiz-current-score').innerText = `得分: ${quizScore} 分`;
+            
+            const percentage = ((currentQuestionIndex) / 5) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${percentage}%`;
+
+            document.getElementById('quiz-question-category').innerText = currentQ.type;
+            document.getElementById('quiz-question-title').innerText = currentQ.question;
+
+            // 渲染選項按鈕
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-slate-50 font-medium text-xs sm:text-sm text-slate-700 transition-all flex items-center justify-between";
+                btn.onclick = () => selectOption(btn, opt);
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <span class="w-5 h-5 rounded-full border border-slate-300 shrink-0 flex items-center justify-center text-xs text-white"></span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(clickedBtn, selectedVal) {
+            const currentQ = quizQuestions[currentQuestionIndex];
+            
+            // 禁能所有選項按鈕以防止重複點擊
+            document.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.onclick = null;
+                btn.classList.remove('hover:border-indigo-500', 'hover:bg-slate-50');
+            });
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+
+            const radio = clickedBtn.querySelector('span:last-child');
+
+            if (selectedVal === currentQ.answer) {
+                // 答對
+                clickedBtn.className = "quiz-opt-btn w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 font-medium text-xs sm:text-sm text-emerald-800 transition-all flex items-center justify-between";
+                radio.className = "w-5 h-5 rounded-full bg-emerald-500 shrink-0 flex items-center justify-center text-xs text-white";
+                radio.innerHTML = "✓";
+                
+                feedback.className = "p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedback.innerHTML = `🌟 答對了！<br><span class="text-slate-500 font-normal mt-1 block">${currentQ.explanation}</span>`;
+                
+                quizScore += 20;
+                playBeep(true);
+            } else {
+                // 答錯
+                clickedBtn.className = "quiz-opt-btn w-full text-left p-4 rounded-xl border border-rose-500 bg-rose-50 font-medium text-xs sm:text-sm text-rose-800 transition-all flex items-center justify-between";
+                radio.className = "w-5 h-5 rounded-full bg-rose-500 shrink-0 flex items-center justify-center text-xs text-white";
+                radio.innerHTML = "✗";
+
+                feedback.className = "p-4 rounded-xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200";
+                feedback.innerHTML = `❌ 答錯囉！正確答案是：${currentQ.answer}<br><span class="text-slate-500 font-normal mt-1 block">${currentQ.explanation}</span>`;
+                
+                playBeep(false);
+
+                // 標示正確的那個選項
+                document.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+                    if (btn.innerText.includes(currentQ.answer)) {
+                        btn.classList.add('border-emerald-500', 'bg-emerald-50/50', 'text-emerald-800');
+                    }
+                });
+            }
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 5) {
+                loadQuizQuestion();
+            } else {
+                // 測驗結束
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-active-panel').classList.add('hidden');
+            
+            const resPanel = document.getElementById('quiz-result-panel');
+            resPanel.classList.remove('hidden');
+
+            const emoji = document.getElementById('quiz-result-emoji');
+            const summary = document.getElementById('quiz-result-summary');
+            const review = document.getElementById('quiz-result-review');
+
+            if (quizScore === 100) {
+                emoji.innerText = "🏆";
+                summary.innerHTML = `恭喜獲得滿分！ <span class="text-emerald-600 font-extrabold">${quizScore} 分</span>`;
+                review.innerText = "太優秀了！你已經完全掌握了這部分的多益、雅思核心單字與 11/23 文法大補帖精華。繼續保持！";
+            } else if (quizScore >= 60) {
+                emoji.innerText = "🎉";
+                summary.innerHTML = `表現不錯唷！ <span class="text-indigo-600 font-extrabold">${quizScore} 分</span>`;
+                review.innerText = "及格了！代表你對大部份單字已有概念。建議可以多使用 NotebookLM 對話來加深 11/23 線上課程中有關「複合名詞」與「形容詞子句」的理解。";
+            } else {
+                emoji.innerText = "✏️";
+                summary.innerHTML = `還需要再努力喔！ <span class="text-rose-600 font-extrabold">${quizScore} 分</span>`;
+                review.innerText = "別灰心！多去幾次「資源庫」翻閱怕渴單字閃卡，配合發音跟讀，再來重新挑戰！";
+            }
+
+            // 更新首頁模擬測驗進度
+            document.getElementById('stat-quiz-score').innerText = `${quizScore} 分 / 100`;
+        }
+
+        // ==========================================
+        // NotebookLM AI 智慧對話核心 (Gemini API 呼叫)
+        // ==========================================
+        let chatHistory = [];
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        // 快速發問
+        function quickAsk(questionText) {
+            document.getElementById('chat-input-field').value = questionText;
+            sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input-field');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // 清空輸入框
+            input.value = '';
+
+            // 1. 渲染使用者訊息
+            appendMessage('user', message);
+
+            // 2. 顯示 AI 正在輸入/思考的動畫
+            const typingId = appendTypingIndicator();
+
+            // 3. 組建 NotebookLM 引用的系統 System Instruction
+            const systemPrompt = `你是一位專業且溫柔的「怕渴英文 (Parker English) AI 智慧學習助手」。
+你的「唯一知識庫」是以下提供的怕渴英文課程逐字稿及教材單字庫：
+
+${JSON.stringify(PARKER_DOCUMENTS, null, 2)}
+
+請遵循以下核心回答規則：
+1. 請「完全僅使用」上述上傳文件中的單字與文法概念來回答學生的問題。如果學生問及「11/23多益線上課」、「複合名詞」、「電腦單字」、「辦公用品單字」、「校園生活單字」或「文學出版」，請務必給予最準確、扣緊文檔的解答。
+2. 回答格式：
+   - 使用親近、鼓勵、有耐心、口吻親切的台灣繁體中文 (例如：『同學你好！關於這個問題...』)。
+   - 請在回答內容的結尾，附上明確的「資料來源引用」標註 (如: 【來源: 11/23 TOEIC Online Class.txt】 或 【來源: Unit 56 電腦單字庫】)，展現出極具 Google NotebookLM 權威溯源的 Grounding 特性！
+3. 若學生的提問內容完全不在上方任何一個怕渴英文文檔中，請委婉有禮貌地告知：『抱歉同學，這部分內容不在您本次載入的怕渴英文課程逐字稿或單字講義中...』，但可以基於現有講義內容，提供最貼近的單字引申教學。`;
+
+            // 4. 呼叫 Gemini API (包含 Exponential Backoff 重試機制)
+            try {
+                const aiResponse = await callGeminiAPI(message, systemPrompt);
+                
+                // 移除輸入中指示，渲染 AI 回覆
+                removeTypingIndicator(typingId);
+                appendMessage('ai', aiResponse);
+            } catch (error) {
+                removeTypingIndicator(typingId);
+                appendMessage('ai', "🚨 抱歉同學，系統在與 NotebookLM 核心伺服器通訊時遇到連線異常，請稍後再試。");
+                showNotification("連線異常", "Gemini API 呼叫失敗，請檢查網路配置。", "⚠️");
+            }
+        }
+
+        // 核心：符合 exponential backoff 的 API 呼叫方法
+        async function callGeminiAPI(userMessage, systemPrompt) {
+            const apiKey = ""; // 執行環境運行時會自動替換為真實 API key
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [
+                    {
+                        parts: [{ text: userMessage }]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            let delay = 1000; // 初始延遲 1s
+            for (let attempt = 1; attempt <= 5; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    return aiText || "未能生成回答，請重新輸入。";
+                } catch (error) {
+                    // 若達到第五次嘗試仍失敗，直接拋出錯誤
+                    if (attempt === 5) {
+                        throw error;
+                    }
+                    // 指數退避延遲：1s, 2s, 4s, 8s, 16s
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // 向對話框中渲染訊息
+        function appendMessage(sender, text) {
+            const container = document.getElementById('chat-messages-container');
+            const wrapper = document.createElement('div');
+            wrapper.className = sender === 'user' ? "flex items-start justify-end space-x-3" : "flex items-start space-x-3";
+
+            if (sender === 'user') {
+                wrapper.innerHTML = `
+                    <div class="bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-none shadow-sm max-w-[85%] sm:max-w-[75%]">
+                        <p class="text-sm leading-relaxed">${text}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
+                        Me
+                    </div>
+                `;
+            } else {
+                // 將換行符 \n 轉換為網頁 <br> 便於閱讀
+                const formattedText = text.replace(/\n/g, '<br>');
+                wrapper.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                        P
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] sm:max-w-[75%] space-y-2">
+                        <p class="text-sm text-slate-800 leading-relaxed">${formattedText}</p>
+                    </div>
+                `;
+            }
+
+            container.appendChild(wrapper);
+            // 滾動到底部
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 渲染正在輸入中
+        function appendTypingIndicator() {
+            const container = document.getElementById('chat-messages-container');
+            const wrapper = document.createElement('div');
+            const indicatorId = "typing-" + Date.now();
+            wrapper.id = indicatorId;
+            wrapper.className = "flex items-start space-x-3";
+            wrapper.innerHTML = `
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                    P
+                </div>
+                <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none flex items-center space-x-1.5 shadow-inner">
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+                </div>
+            `;
+            container.appendChild(wrapper);
+            container.scrollTop = container.scrollHeight;
+            return indicatorId;
+        }
+
+        function removeTypingIndicator(indicatorId) {
+            const indicator = document.getElementById(indicatorId);
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function clearChatHistory() {
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                        P
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] sm:max-w-[75%] space-y-2">
+                        <p class="text-sm text-slate-800 leading-relaxed">對話歷史已成功清空！您可以再次向我提問關於怕渴英文講義文稿的任何文法、單字問題囉。</p>
+                        <div class="text-[10px] text-indigo-600 font-semibold bg-indigo-50 inline-block px-2 py-0.5 rounded-md">NotebookLM 本地安全沙盒</div>
+                    </div>
+                </div>
+            `;
+            showNotification("歷史已重置", "已成功清空所有對話內容", "🧹");
+        }
+
+        // ==========================================
+        // NotebookLM 檔案來源預覽 (Sources Manager)
+        // ==========================================
+        function openSourcePreview(docId) {
+            const doc = PARKER_DOCUMENTS.find(d => d.id === docId);
+            if (!doc) return;
+
+            document.getElementById('source-preview-title').innerText = doc.title;
+            document.getElementById('source-preview-tag').innerText = `怕渴教材目錄：${doc.category}`;
+            document.getElementById('source-preview-icon').innerText = doc.icon;
+            
+            // 轉換文檔格式與醒目提示
+            let formattedText = doc.rawText.replace(/\n/g, '<br>');
+            doc.highlights.forEach(hl => {
+                formattedText = formattedText.replace(new RegExp(hl, 'g'), `<span class="bg-yellow-100 text-yellow-900 px-1 py-0.5 font-bold rounded">${hl}</span>`);
+            });
+
+            document.getElementById('source-preview-content').innerHTML = `
+                <div class="space-y-4">
+                    <div class="p-3 bg-indigo-50 text-indigo-800 text-xs rounded-xl font-semibold">
+                        💡 已在此文件為您高亮標註多益/雅思高頻考點：${doc.highlights.join(', ')}
+                    </div>
+                    <p class="leading-relaxed text-xs sm:text-sm font-medium text-slate-700 font-mono">${formattedText}</p>
+                </div>
+            `;
+
+            document.getElementById('source-preview-modal').classList.remove('hidden');
+        }
+
+        function closeSourcePreview() {
+            document.getElementById('source-preview-modal').classList.add('hidden');
+        }
+
+        // ==========================================
+        // FAQ 動態摺疊 (Accordion) 渲染
+        // ==========================================
+        function renderFAQ() {
+            const container = document.getElementById('faq-accordions-container');
+            container.innerHTML = '';
+
+            FAQ_DATA.forEach((faq, index) => {
+                const item = document.createElement('div');
+                item.className = "bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm";
+                item.innerHTML = `
+                    <button onclick="toggleFAQ(${index})" class="w-full flex justify-between items-center p-5 font-bold text-slate-800 hover:bg-slate-50 transition-all text-left text-xs sm:text-sm">
+                        <span>❓ ${faq.question}</span>
+                        <svg id="faq-arrow-${index}" class="w-4 h-4 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="faq-content-${index}" class="hidden p-5 border-t border-slate-100 text-xs sm:text-sm text-slate-600 bg-slate-50 leading-relaxed">
+                        ${faq.answer}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleFAQ(index) {
+            const content = document.getElementById(`faq-content-${index}`);
+            const arrow = document.getElementById(`faq-arrow-${index}`);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+    </script>
+</body>
+</html>
